@@ -1,0 +1,24 @@
+{
+  "name": "@dao-library/voting",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    "./multisig": "./src/multisig.js",
+    "./majority": "./src/majority.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "vitest": "^1.1.0"
+  },
+  "dependencies": {
+    "sinon": "^17.0.1",
+    "sqlite3": "^5.1.6"
+  }
+}

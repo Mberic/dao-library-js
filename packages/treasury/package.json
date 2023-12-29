@@ -1,0 +1,19 @@
+{
+  "name": "@dao-library/treasury",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    "./token-manager": "./src/token-manager.js"
+  },
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "vitest": "^1.1.0"
+  }
+}
