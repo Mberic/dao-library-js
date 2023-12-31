@@ -77,36 +77,35 @@ async function action_proxy(payload, address){
         initialize(...params);
         addAddresses(address);
       } else {
-        console.log("DAO already initialised!");
+        console.log("\nDAO already initialised!\n");
         }
     } else {
-      console.log("Unaccepted initializer address");
+      console.log("\nUnaccepted initializer address\n");
       }
-  }
-
-  if (await isMember(address)){
+  } else if (await isMember(address)){
 
     switch(action){
       case "createProposal":
-        result = createProposal(...params);
+        result = await createProposal(...params);
+        console.log("\nProposal ID: " + result + "\n");
         break;
       case "approve":
-        approve(...params);
+        result = await approve(...params);
+        console.log("\nResult of approve request: " + result + "\n");
         break;
       case "getActionObject":
         result = getActionObject(...params);
-        action_proxy(result);
+        console.log("\nAction object for given proposalID "+ result + "\n");
         break;
       case "execute":
         let actionObject = await getActionObject(...params);
         _action_proxy(actionObject[0]);
-        // console.log(actionObject[0]);
         break;
       default:
-        console.log("Failed to execute any action");
+        console.log("\nFailed to execute any action\n");
     }
   } else {
-    console.log("Sender address not a member");
+    console.log("\nSender address not a member\n");
   }
 }
 
@@ -116,15 +115,18 @@ function _action_proxy(actionObject){
   let action = actionObject.action;
   let params = actionObject.params;
 
+  let result;
+
   switch(action){
     case "addAddresses":
-        let result = addAddresses(...params);
-        console.log("Execution of add address :" + result);
+        result = addAddresses(...params);
+        console.log("Execution of add address request :" + result);
         break;
     case "removeAddresses":
-      removeAddresses(...params);
+      result = removeAddresses(...params);
+      console.log("Execution of remove address request :" + result);
       break;
-      default:
+    default:
         console.log("Failed to execute any action");
     }
 }

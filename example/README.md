@@ -2,8 +2,6 @@
 
 Let's see an example on how we can use the DAO library. We will be creating a multisig DAO. 
 
-**Note**: Remember to check out the recap section at the end to see the steps on how to build everything from scratch
-
 ## Set-Up
 First, install `sunodo`. Sunodo is a CLI tool for Cartesi that eases the work of building, running, and interacting with your Cartesi DApps. 
 
@@ -138,17 +136,7 @@ Next, we are going to create a proposal `createProposal`, vote for it `approve`,
 1. Create a proposal to add a new member. Use `sunodo` as shown earlier. Please use this account in your `sunodo` selection: `Account 0xf39Fd...266` for all the DApp inputs below.
 
 ```json
-{
-  "action": "createProposal",
-  "params": [
-    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-    { "title": "add address", "description": "new member" },
-    { "action": "addAddresses", "params": ["0x70997970C51812dc3A010C7d01b50e0d17dc79C8"] },
-    "20-Mar-2023",
-    "20-June-2023",
-    0
-  ]
-}
+{  "action": "createProposal", "params": [ "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", { "title": "add address", "description": "new member" }, "2023-12-29 02:30:00",  "2024-12-29 02:30:00", { "action": "addAddresses", "params": ["0x70997970C51812dc3A010C7d01b50e0d17dc79C8"] } ] }
 ```
 2. Approve (i.e vote) for the proposal:
 

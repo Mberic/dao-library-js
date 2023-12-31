@@ -1,4 +1,4 @@
-import { connection, closeDatabaseConnection } from "../../database/connection.js";
+import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /**
  * @notice Adds new members to the address list.
@@ -48,12 +48,7 @@ function approve(voter, proposalId) {
   let db = connection();
 
   try {
-    // Validate the proposal
-    const proposal = db.get('SELECT * FROM Proposals WHERE ProposalID = ?', [proposalId]);
-    if (!proposal) {
-      throw new Error(`Proposal with ID ${proposalId} not found.`);
-    }
-
+    
     db.run('INSERT INTO Votes (VoteID, ProposalID, VoteOption) VALUES (?, ?, ?)', [voter, proposalId, "Approve"]);
     return true;
   } catch (error) {

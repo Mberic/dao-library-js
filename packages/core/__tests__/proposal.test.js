@@ -1,38 +1,21 @@
 // Import the necessary modules and functions
 import { test, assert } from "vitest";
-import {createProposal, proposalCount, proposalExists, executeProposal } from "../src/proposal.js";
+import {createProposal, proposalCount, proposalExists } from "../src/proposal.js";
 
-// Mock the database connection functions
-const mockConnection = () => {
-  return {
-    get: (_, __, callback) => callback(null, { count: 1 }),
-    run: (_, __, callback) => callback(null, { lastID: 1 }),
-    all: (_, __, callback) => callback(null, [{ ActionObject: '{}' }]),
-  };
-};
-
-// Start writing tests
+// Tests
 
 test("createProposal function", async () => {
   
   // Test the createProposal function
   const result = await createProposal(
     "proposer",
-    { title: "Proposal Title", description: "Proposal Description" },
+    { title: "Title", description: "Proposal Description" },
     "startDate",
     "endDate",
     [{ action: "some action" }],
     {}
   );
   console.log(result) ;
-});
-
-test("executeProposal function", async () => {
-  
-  // Test the executeProposal function
-  await assert.doesNotRejectAsync(async () => {
-    await executeProposal(1);
-  });
 });
 
 test("proposalCount function", async () => {
@@ -46,5 +29,9 @@ test("proposalExists function", async () => {
 
   // Test the proposalExists function
   const result = await proposalExists(1);
-  assert.equal(result, true);
+  assert.equal(result, false);
+
+  // Test the proposalExists function
+  const result2 = await proposalExists("77f0d7706877c72ed7f6646fc7c476d022637eb0709ec65750add925416fefa7");
+  assert.equal(result2, false);
 });

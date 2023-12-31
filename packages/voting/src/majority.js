@@ -1,4 +1,4 @@
-import { connection, closeDatabaseConnection } from "../../database/connection.js";
+import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /**
  * Returns the support threshold parameter stored in the voting settings.

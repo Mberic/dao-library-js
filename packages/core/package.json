@@ -1,6 +1,6 @@
 {
   "name": "@dao-library/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "type": "module",
   "exports": {
@@ -20,6 +20,7 @@
     "vitest": "^1.1.0"
   },
   "dependencies": {
-    "@jest/globals": "^29.7.0"
+    "@jest/globals": "^29.7.0",
+    "@dao-library/database": "1.0.0"
   }
 }

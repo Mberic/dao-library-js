@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "ethers": "^6.9.1",
-    "@dao-library/core": "workspace:*",
-    "@dao-library/voting": "workspace:*",
-    "@dao-library/membership": "workspace:*"
+    "@dao-library/core": "^1.0.1",
+    "@dao-library/membership": "^1.0.1",
+    "@dao-library/voting": "^1.0.1",
+    "ethers": "^6.9.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

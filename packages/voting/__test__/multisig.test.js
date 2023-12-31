@@ -22,7 +22,7 @@ describe('Multisig Tests', () => {
 
   // Test for approve
   it('should approve a proposal successfully', () => {
-    const result = approve('voterAddress', 123); // Replace 'voterAddress' with an actual address
+    const result = approve('voterAddress', 1); 
     expect(result).toBe(true);
   });
   

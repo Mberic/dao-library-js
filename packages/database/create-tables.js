@@ -21,7 +21,7 @@ createTable('Proposals', createProposalsTable());
 createTable('Votes', createVotesTable());
 createTable('VotingSettings', createVotingSettings());
 createTable('Treasury', createTreasuryTable());
-createVestingTable('Vesting', createVestingTable());
+createTable('Vesting', createVestingTable());
 createTable('Actions', createActionsTable());
 
 // Close the database connection
@@ -45,7 +45,7 @@ function createDaoTable() {
       CREATE TABLE IF NOT EXISTS Permission (
         who VARCHAR(255) PRIMARY KEY,
         function VARCHAR(255) NOT NULL,
-        PermissionId SERIAL
+        permissionId SERIAL
       );
     `;
   }
@@ -138,14 +138,13 @@ function createDaoTable() {
     return  `
       CREATE TABLE IF NOT EXISTS Vesting (
         VestingID INTEGER PRIMARY KEY,
-        HolderAddress VARCHAR(255) REFERENCES Members(address),
+        HolderAddress VARCHAR(255),
         Amount INTEGER,
         StartDate DATETIME,
         CliffDate DATETIME,
         VestedDate DATETIME,
         Revokable BOOLEAN,
-        Revoked BOOLEAN DEFAULT FALSE,
-        UNIQUE(VestingID)
+        Revoked BOOLEAN DEFAULT FALSE
     );
   `;
   }

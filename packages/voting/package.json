@@ -1,6 +1,6 @@
 {
   "name": "@dao-library/voting",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "type": "module",
   "exports": {
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "sinon": "^17.0.1",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "@dao-library/database": "1.0.0"
   }
 }

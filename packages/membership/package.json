@@ -1,6 +1,6 @@
 {
   "name": "@dao-library/membership",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "keywords": [],
   "author": "",
@@ -14,6 +14,7 @@
     ".": "./src/membership.js"
   },
   "devDependencies": {
-    "vitest": "^1.1.0"
+    "vitest": "^1.1.0",
+    "@dao-library/database": "1.0.0"
   }
 }

@@ -1,4 +1,4 @@
-import { connection, closeDatabaseConnection } from "../../database/connection.js";
+import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /**
  * Checks if a given address is a member.

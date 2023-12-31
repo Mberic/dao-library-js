@@ -1,12 +1,14 @@
 {
-  "name": "database",
+  "name": "@dao-library/database",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "exports": {
+    ".": "./connection.js"
+  },
   "dependencies": {
     "sqlite3": "^5.1.6"
   },

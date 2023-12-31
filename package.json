@@ -15,5 +15,8 @@
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "vitest": "^1.1.0"
   }
 }

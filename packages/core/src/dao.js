@@ -1,4 +1,4 @@
-import { connection, closeDatabaseConnection } from "../../database/connection.js";
+import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /// @param daoAddress The address of the DAO contract
 /// @param daoURI The DAO URI should confirm to [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824).
@@ -26,52 +26,51 @@ function initialize(daoAddress, daoURI, version) {
 /// @notice Sets the new [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824) DAO URI and emits the associated event.
 /// @param daoURI The new DAO URI.
 function setDaoURI(daoURI, version) {
+  return new Promise((resolve, reject) => {
+    let db = connection();
 
-  let db = connection();
-
-  try {
-    // Database action to update DAO URI in the Dao table for a given version
-    db.run(`UPDATE Dao SET daoURI = ? WHERE version = ?`, [daoURI, version], function (err) {
-      if (err) {
-        console.error(`Error in setDaoURI (UPDATE): ${err.message}`);
-        closeDatabaseConnection(db);
-        return false;
-      } else {
-        console.log(`Updated Dao URI for version ${version}`);
-        closeDatabaseConnection(db);
-        return true;
-      }
-    });
-  } catch (error) {
-    console.error(`Error in setDaoURI: ${error.message}`);
-    closeDatabaseConnection(db);
-    return false;
-  }
+    try {
+      // Database action to update DAO URI in the Dao table for a given version
+      db.run(`UPDATE Dao SET daoURI = ? WHERE version = ?`, [daoURI, version], function (err) {
+        if (err) {
+          console.error(`Error in setDaoURI (UPDATE): ${err.message}`);
+          closeDatabaseConnection(db);
+          reject(false);
+        } else {
+          console.log(`Updated Dao URI for version ${version}`);
+          closeDatabaseConnection(db);
+          resolve(true);
+        }
+      });
+    } catch (error) {
+      console.error(`Error in setDaoURI: ${error.message}`);
+      closeDatabaseConnection(db);
+      reject(false);
+    }
+  });
 }
 
 /// @notice Get the DAO URI
 async function daoURI(version) {
-  let db = connection();
+  return new Promise((resolve, reject) => {
+    let db = connection();
 
-  try {
-    // Database action to retrieve DAO URI from the Dao table
-    let uri = await new Promise((resolve, reject) => {
+    try {
+      // Database action to retrieve DAO URI from the Dao table
       db.get(`SELECT daoURI FROM Dao WHERE version = ?`, [version], (err, row) => {
         if (err) {
           reject(err);
         } else {
+          closeDatabaseConnection(db);
           resolve(row ? row.daoURI : null);
         }
       });
-    });
-
-    closeDatabaseConnection(db);
-    return uri;
-  } catch (error) {
-    console.error(`Error in daoURI: ${error.message}`);
-    closeDatabaseConnection(db);
-    return null;
-  }
+    } catch (error) {
+      console.error(`Error in daoURI: ${error.message}`);
+      closeDatabaseConnection(db);
+      reject(null);
+    }
+  });
 }
 
 /// @notice Provides the current DAO version. This is important in case of upgradeable DAOs
@@ -99,28 +98,4 @@ async function protocolVersion() {
   }
 }
 
-/// @notice Checks if an address has permission on a contract via a permission identifier.
-/// @param where The function to be accessed
-/// @param who The address to give the permissions.
-/// @param permissionId The permission identifier.
-/// @param data The optional data passed to the `PermissionCondition` registered.
-/// A permission condition can be something such as: address has balance greater than
-/// OR address has participated in n number of proposals, showing that they are an active community memeber
-/// @return Returns true if the address has permission, false if not.
-function hasPermission(where, who, permissionID, data) {
-
-  let db = connection();
-
-  try {
-    // Database action to check if a member has a specific permission
-    const result = db.get(`SELECT COUNT(*) AS count FROM Permission WHERE who = ? AND function = ? AND permissionID = ?`, [who, where, permissionID]);
-    closeDatabaseConnection(db);
-    return result.count > 0;
-  } catch (error) {
-    console.error(`Error in hasPermission: ${error.message}`);
-    closeDatabaseConnection(db);
-    return false;
-  }
-}
-
-export { daoURI, hasPermission, initialize, protocolVersion, setDaoURI };
+export { daoURI, initialize, protocolVersion, setDaoURI };

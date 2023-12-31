@@ -1,4 +1,4 @@
-import { closeDatabaseConnection, connection } from "../../database/connection.js";
+import { closeDatabaseConnection, connection } from "@dao-library/database";
 import crypto from 'crypto';
 
 /**

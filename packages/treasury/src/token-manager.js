@@ -1,4 +1,4 @@
-import { connection, closeDatabaseConnection } from "../../database/connection";
+import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /**
  * @notice Mint tokens for `receiver`.

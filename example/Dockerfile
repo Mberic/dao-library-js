@@ -14,23 +14,14 @@ RUN apt-get update && \
 
 WORKDIR /opt/cartesi/dapp
 
-# Copy only the package.json files to leverage Docker caching
-COPY package.json ./
-
-RUN npm install
-
-# Copy the rest of the application files
 COPY . .
 
-# Set the working directory to the location of package.json
-WORKDIR /opt/cartesi/dapp/src/core/database
+WORKDIR /opt/cartesi/dapp/src
+
+RUN npm rebuild
 
 # Install dependencies
 RUN npm install
-
-# create database
-RUN node create-tables.js
-
 
 # runtime stage: produces final image that will be executed
 
