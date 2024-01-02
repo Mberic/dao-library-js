@@ -22,13 +22,16 @@ importers:
   example/src:
     dependencies:
       '@dao-library/core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/core
       '@dao-library/membership':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/membership
+      '@dao-library/treasury':
+        specifier: workspace:^
+        version: link:../../packages/treasury
       '@dao-library/voting':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/voting
       ethers:
         specifier: ^6.9.1
@@ -37,7 +40,7 @@ importers:
   packages/core:
     dependencies:
       '@dao-library/database':
-        specifier: workspace:*
+        specifier: 1.1.0
         version: link:../database
       '@jest/globals':
         specifier: ^29.7.0
@@ -69,7 +72,7 @@ importers:
   packages/membership:
     devDependencies:
       '@dao-library/database':
-        specifier: workspace:*
+        specifier: 1.1.0
         version: link:../database
       vitest:
         specifier: ^1.1.0
@@ -78,7 +81,7 @@ importers:
   packages/treasury:
     devDependencies:
       '@dao-library/database':
-        specifier: workspace:*
+        specifier: 1.1.0
         version: link:../database
       jest:
         specifier: ^29.7.0
@@ -90,7 +93,7 @@ importers:
   packages/voting:
     dependencies:
       '@dao-library/database':
-        specifier: workspace:*
+        specifier: 1.1.0
         version: link:../database
       sinon:
         specifier: ^17.0.1

@@ -20,7 +20,7 @@ createTable('Permission', createPermissionTable());
 createTable('Proposals', createProposalsTable());
 createTable('Votes', createVotesTable());
 createTable('VotingSettings', createVotingSettings());
-createTable('Treasury', createTreasuryTable());
+createTable('Token', createTokenTable());
 createTable('Vesting', createVestingTable());
 createTable('Actions', createActionsTable());
 
@@ -121,15 +121,13 @@ function createDaoTable() {
     `;
   }
   
-  function createTreasuryTable(){
+  function createTokenTable(){
     return `
-      CREATE TABLE IF NOT EXISTS Treasury (
-        TransactionID INTEGER PRIMARY KEY,
-        SenderAddress VARCHAR(255),
-        ReceiverAddress VARCHAR(255),
-        Amount INTEGER,
-        Balance INTEGER,
-        Purpose TEXT -- this can be a ProposalID or link to description
+      CREATE TABLE IF NOT EXISTS Token (
+        tokenId SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        symbol VARCHAR(10) NOT NULL,
+        totalSupply INTEGER NOT NULL CHECK (totalSupply >= 0)
       );
     `;
   }

@@ -1,17 +1,73 @@
 import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /**
+ * Initialize the Token Manager and add 0xda0 member to the Members table.
+ * @param {string} tokenName - The name of the token.
+ * @param {string} tokenSymbol - The symbol of the token.
+ * @param {number} initialSupply - The initial token supply.
+ */
+async function initializeTokenManager(tokenName, tokenSymbol, initialSupply) {
+  const db = connection();
+
+  try {
+    // Insert initial token details into the Token table
+    await db.run(`
+      INSERT INTO Token (name, symbol, totalSupply)
+      VALUES (?, ?, ?)
+    `, [tokenName, tokenSymbol, initialSupply]);
+
+    // Check if the 0xda0 member already exists in the Members table
+    const memberExists = await new Promise((resolve, reject) => {
+      db.get('SELECT COUNT(*) AS count FROM Members WHERE address = ?', ['0xda0'], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row.count > 0);
+        }
+      });
+    });
+
+    // If the 0xda0 member doesn't exist, add it to the Members table
+    if (!memberExists) {
+      await db.run(`
+        INSERT INTO Members (address, balance)
+        VALUES ('0xda0', ?)
+      `, [initialSupply]);
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Error in initializeTokenManager: ${error.message}`);
+    return false;
+  } finally {
+    closeDatabaseConnection(db);
+  }
+}
+
+/**
  * @notice Mint tokens for `receiver`.
  * @param {string} receiver - The address receiving the tokens, cannot be the Token Manager itself (use `issue()` instead).
  * @param {number} amount - Number of tokens minted.
  */
-function mint(receiver, amount) {
-  let db = connection();
+async function mint(receiver, amount) {
+  const db = connection();
 
   try {
-    db.run('INSERT INTO Treasury (SenderAddress, ReceiverAddress, Amount, Purpose) VALUES (?, ?, ?, ?)', ['Token Manager', receiver, amount, 'Mint']);
+    // Check if the receiver is the Token Manager
+    if (receiver.toLowerCase() === "0xda0") {
+      throw new Error("Cannot mint tokens directly to the Token Manager. Use 'issue()' instead.");
+    }
+
+    // Update the Token table with the minted amount
+    await db.run(`UPDATE Token SET totalSupply = totalSupply + ? `, [amount]);
+
+    // Update the receiver's balance in the Members table
+    await db.run(`UPDATE Members SET balance = balance + ? WHERE address = ?`, [amount, receiver]);
+
+    return true;
   } catch (error) {
     console.error(`Error in mint: ${error.message}`);
+    return false;
   } finally {
     closeDatabaseConnection(db);
   }
@@ -21,13 +77,20 @@ function mint(receiver, amount) {
  * @notice Mint tokens for the Token Manager.
  * @param {number} amount - Number of tokens minted.
  */
-function issue(amount) {
-  let db = connection();
+async function issue(amount) {
+  const db = connection();
 
   try {
-    db.run('INSERT INTO Treasury (SenderAddress, ReceiverAddress, Amount, Purpose) VALUES (?, ?, ?, ?)', ['Token Manager', 'Token Manager', amount, 'Issue']);
+    // Update the Token table with the minted amount
+    await db.run(`UPDATE Token SET totalSupply = totalSupply + ? `, [amount]);
+
+    // Update the Token Manager's balance in the Members table
+    await db.run(`UPDATE Members SET balance = balance + ? WHERE address = '0xda0'`, [amount]);
+
+    return true;
   } catch (error) {
     console.error(`Error in issue: ${error.message}`);
+    return false;
   } finally {
     closeDatabaseConnection(db);
   }
@@ -38,13 +101,21 @@ function issue(amount) {
  * @param {string} receiver - The address receiving the tokens.
  * @param {number} amount - Number of tokens transferred.
  */
-function assign(receiver, amount) {
-  let db = connection();
+async function assign(receiver, amount) {
+  const db = connection();
 
   try {
-    db.run('INSERT INTO Treasury (SenderAddress, ReceiverAddress, Amount, Purpose) VALUES (?, ?, ?, ?)', ['Token Manager', receiver, amount, 'Assign']);
+
+    // Update the Token Manager's balance in the Members table
+    await db.run(`UPDATE Members SET balance = balance - ? WHERE address = '0xda0'`, [amount]);
+
+    // Update the receiver's balance in the Members table
+    await db.run(`UPDATE Members SET balance = balance + ? WHERE address = ?`, [amount, receiver]);
+
+    return true;
   } catch (error) {
     console.error(`Error in assign: ${error.message}`);
+    return false;
   } finally {
     closeDatabaseConnection(db);
   }
@@ -55,13 +126,20 @@ function assign(receiver, amount) {
  * @param {string} holder - Holder of tokens being burned.
  * @param {number} amount - Number of tokens being burned.
  */
-function burn(holder, amount) {
-  let db = connection();
+async function burn(holder, amount) {
+  const db = connection();
 
   try {
-    db.run('INSERT INTO Treasury (SenderAddress, ReceiverAddress, Amount, Purpose) VALUES (?, ?, ?, ?)', [holder, 'Burned Tokens', amount, 'Burn']);
+    // Update the Token table by reducing the total supply
+    await db.run(`UPDATE Token SET totalSupply = totalSupply - ? `, [amount]);
+
+    // Update the holder's balance in the Members table
+    await db.run(`UPDATE Members SET balance = balance - ? WHERE address = ?`, [amount, holder]);
+
+    return true;
   } catch (error) {
     console.error(`Error in burn: ${error.message}`);
+    return false;
   } finally {
     closeDatabaseConnection(db);
   }
@@ -149,4 +227,4 @@ function spendableBalanceOf(holder) {
   });
 }
 
-export { assign, assignVested, burn, getVesting, issue, mint, revokeVesting, spendableBalanceOf };
+export { initializeTokenManager, assign, assignVested, burn, getVesting, issue, mint, revokeVesting, spendableBalanceOf };
