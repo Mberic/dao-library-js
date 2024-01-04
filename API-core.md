@@ -4,36 +4,37 @@ As mentioned earlier, we describe an API using (1) **its function name** and (2)
 
 Below is the list of the core API endpoints. 
 
-## Core
-
-### DAO 
+## DAO 
 
 -------------
 **action**: `initialize`
 
 **params**
 
-- `daoAddress` (String): The address of the DAO contract
-- `daoURI` (String): The DAO URI should confirm to [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824).
+`daoAddress` The address of the DAO contract  
+`daoURI` The DAO URI should confirm to [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824).
 
 **returns**:
-- `null` if not yet set
+
+`null` if not yet set, `true` otherwise
 
 ----------------
 
 **action**: `setDaoURI`
 
 **params**
-- `daoURI` The new DAO URI.
-- `version` The DAO version for which to change the URI
+`daoURI` The new DAO URI.  
+`version` The DAO version for which to change the URI
 
-**description** Sets the new [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824) DAO URI and emits the associated event.
+**description** Sets the new [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824) DAO URI 
 
 -------------------
 
 **action** `daoURI`
 
-**description** Get the DAO URI for a given version
+**params** `version` Version of the DAO 
+
+**description** Gets the DAO URI for a given version
 
 ------------
 
@@ -43,15 +44,15 @@ Below is the list of the core API endpoints.
 
 **description** Provides the current DAO version.
 
-### Permissions 
+## Permissions 
 
 **action**: `hasPermission`
 
 **params**
 
-- `where` : The function (action) to be accessed.
-- `who` : The address to give the permissions.
-- `permissionId` : The permission identifier.
+- `where` The function (action) to be accessed.
+- `who` The address to give the permissions.
+- `permissionId` The permission identifier.
 
 **description**
 
@@ -59,8 +60,7 @@ Checks if an address has permission via a permission identifier.
 
 **returns**
 
-- Type: Boolean
-- Returns true if the address has permission, false if not.
+`true` if the address has permission, `false` if not.
 
 -------------
 
@@ -68,9 +68,9 @@ Checks if an address has permission via a permission identifier.
 
 **params**
 
-- `where` : The target function/action for which `who` receives permission.
-- `who` : The address receiving the permission.
-- `permissionId` : The permission identifier.
+`where` The target function/action for which `who` receives permission.  
+`who` The address receiving the permission.  
+`permissionId` The permission identifier.
 
 **description**
 
@@ -88,15 +88,15 @@ Grants permission to an address to call actions with the specified permission id
 
 **description**
 
-Revokes permission from an address to call methods in a target function with the specified permission identifier.
+Revokes permission from an address to call a target function 
 
-### Proposals
+## Proposals
 
 **action**: `proposalCount`
 
 **params**
 
-- `proposalId` - The unique identifier of the proposal.
+`proposalId` - The unique identifier of the proposal.
 
 **description** Resolves the count of proposals in the database.
 
@@ -106,18 +106,17 @@ Revokes permission from an address to call methods in a target function with the
 
 **params**
 
-`proposer` - The address of the proposer submitting the proposal.
-`metadata` - Metadata object containing information about the proposal (e.g., title, description).
-`startDate` - The start date of the proposal.
-`endDate` - The end date of the proposal.
-`actions` - An array of action objects representing the steps to be executed if the proposal is approved.
-`allowFailureMap` - An object mapping action indices to boolean values indicating whether failure is allowed for each action.
+`proposer` - The address of the proposer submitting the proposal.  
+`metadata` - Metadata object containing information about the proposal (i.e, `title` and `description`).  
+`startDate` - The start date of the proposal.  
+`endDate` - The end date of the proposal.    
+`actions` - An array of action objects representing the steps to be executed if the proposal is approved.  
 
 **description** Creates a new proposal
 
 **returns**
 
-- The ID of the newly created proposal.
+The ID of the newly created proposal.
 
 -------------
 
@@ -125,13 +124,13 @@ Revokes permission from an address to call methods in a target function with the
 
 **params**: 
 
-`proposalID` - The unique identifier of the proposal to be executed.
+`proposalID` The unique identifier of the proposal to be executed.
 
 **returns** - A promise that resolves to an array of action objects.
 
 ------------
 
-**action** `proposalExist`
+**action** `proposalExists`
 
 **params**:
 
