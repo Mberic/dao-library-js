@@ -1,20 +1,22 @@
-## Plugins
+# DAO Extensions
 
-Please note that you can also a contribute to add onto the plugin library.
+Please note that you can also a contribute to add onto the library of DAO extensions.
 
-### Membership
+## Membership
+
+**action** `isMember`
 
 **description** Checks if a given address is a member.
 
-**param {string}** `address` - The address to check for membership.
+**param** `address` - The address to check for membership.
 
 **returns**
 
- - A promise that resolves to `true` if the address is a member, `false` otherwise.
+A promise that resolves to `true` if the address is a member, `false` otherwise.
 
-### Voting
+## Voting
 
-## Majority Voting
+### Majority Voting
 
 **action** `supportThreshold`
 
@@ -40,7 +42,7 @@ Please note that you can also a contribute to add onto the plugin library.
 
 **description** Checks if the support value defined for a proposal vote is greater than the support threshold.
 
-**return {boolean}** - Returns `true` if the support is greater than the support threshold and `false` otherwise.
+**return** - Returns `true` if the support is greater than the support threshold and `false` otherwise.
 
 ---------------
 
@@ -50,9 +52,9 @@ Please note that you can also a contribute to add onto the plugin library.
 
 `proposalId` - The ID of the proposal.
 
-**description** Checks if the participation value defined for a proposal vote is greater or equal than the minimum participation value.
+**description** Checks if the participation value defined for a proposal vote is greater than or equal to the minimum participation value.
 
-**return {boolean}** - Returns `true` if the participation is greater than the minimum participation and `false` otherwise.
+**return** - Returns `true` if the participation is greater than the minimum participation and `false` otherwise.
 
 ----------------------
 
@@ -60,7 +62,7 @@ Please note that you can also a contribute to add onto the plugin library.
 
 **params**
 
-`proposalId` - The ID of the proposal.
+`proposalId` - The ID of the proposal.  
 `account` - The account address to be checked.
 
 **description** Returns whether the account has voted for the proposal.
@@ -73,9 +75,9 @@ Please note that you can also a contribute to add onto the plugin library.
 
 **params**
 
-`voter` - The voter address/ID.
-`proposalId` - The ID of the proposal.
-`voteOption` - The chosen vote option.
+`voter` - The voter address/ID.  
+`proposalId` - The ID of the proposal.  
+`voteOption` - The chosen vote option.  
 
 **description** Cast vote for a vote option.
 
@@ -84,6 +86,7 @@ Please note that you can also a contribute to add onto the plugin library.
 **action** `setMinParticipation`
 
 **params**
+
 `minParticipation` - The new minimum participation value.
 
 **description** Set the minimum participation in the voting settings.
@@ -97,12 +100,14 @@ Please note that you can also a contribute to add onto the plugin library.
 **description** Set the support threshold in the voting settings.
 
 **params**
+
 `supportThreshold` - The new support threshold value.
 
 **returns** A promise that resolves to `true` if the operation is successful, false otherwise.
  
-## Multisig Voting
+### Multisig Voting
 
+-----------------
 **action** `addAddresses`
 
 **params** 
@@ -111,7 +116,7 @@ Please note that you can also a contribute to add onto the plugin library.
 
 **description** Adds new members to the address list.
 
-**returns {boolean}** - True if the member was successfully added, false otherwise.
+**returns** - True if the member was successfully added, false otherwise.
 
 ----------------
 
@@ -123,7 +128,7 @@ Please note that you can also a contribute to add onto the plugin library.
 
 **description** Removes existing members from the address list.
 
-**returns {boolean}**  - True if the member was successfully removed, false otherwise.
+**returns**  - True if the member was successfully removed, false otherwise.
 
 -------------------------
 **action** `approve`
@@ -133,13 +138,13 @@ Please note that you can also a contribute to add onto the plugin library.
 `voter` - The address/ID of the voter.
 `proposalId` - The ID of the proposal.
 
-**returns {boolean}** - True if the approval was successful, false otherwise.
+**returns** - True if the approval was successful, false otherwise.
 
 **description** Approves the proposal.
 
-### Treasury
+## Treasury
 
-#### Token Manager
+### Token Manager
 
 **action**: `mint`
 
@@ -147,6 +152,8 @@ Please note that you can also a contribute to add onto the plugin library.
 
 - `receiver` The address receiving the tokens, cannot be the Token Manager itself (use `issue()` instead)
 - `amount` Number of tokens minted
+
+**description** Mint tokens for receiver, and increase total supply
 
 ---------
 
@@ -156,7 +163,9 @@ Please note that you can also a contribute to add onto the plugin library.
 
 - `amount` Number of tokens minted
 
-**description** Mint tokens for the Token Manager
+**description** Mint tokens for the Token Manager, and increase total supply
+
+Note: Token manager uses a reserved address called `0xda0`. This address is a also member of the DAO.
 
 ---------
 
@@ -177,7 +186,7 @@ Please note that you can also a contribute to add onto the plugin library.
 - `holder` Holder of tokens being burned
 - `amount` Number of tokens being burned
 
-**description**: Burn ` amount` tokens from `holder`
+**description**: Remove ` amount` tokens from `holder`, and reduce total supply
 
 --------
 
@@ -192,13 +201,16 @@ Please note that you can also a contribute to add onto the plugin library.
 - `vested` Date when all tokens are transferable
 - `revokable` Whether the vesting can be revoked by the Token Manager
 
-**description**: Assign `amount` tokens to `receiver` from the Token Manager's holdings with a revokable vesting starting at given date
+**description**: 
+
+Assign `amount` tokens to `receiver` from the Token Manager's holdings with a revokable vesting starting at given date
 
 -------
 
 **action**: `revokeVesting`
 
 **params**:
+
 - `holder` Address whose vesting to revoke
 - `vestingId` Numeric ID of the vesting
 
@@ -222,6 +234,7 @@ Please note that you can also a contribute to add onto the plugin library.
 **action** `spendableBalanceOf`
 
 **params**
+
 `holder` - The address of the holder.
 
 **description** Gets the spendable balance of a holder.

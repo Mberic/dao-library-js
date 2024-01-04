@@ -22,7 +22,7 @@ Below is the list of the core API endpoints.
 
 **action**: `setDaoURI`
 
-**params**
+**params**  
 `daoURI` The new DAO URI.  
 `version` The DAO version for which to change the URI
 
