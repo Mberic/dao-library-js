@@ -101,9 +101,6 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
     devDependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0
       mocha:
         specifier: ^10.2.0
         version: 10.2.0
