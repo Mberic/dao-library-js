@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "@dao-library/core": "^2.0.0",
-    "@dao-library/membership": "^2.1.0",
-    "@dao-library/treasury": "^2.0.0",
-    "@dao-library/voting": "^2.0.0",
+    "@dao-library/core": "^2.0.1",
+    "@dao-library/membership": "^2.2.0",
+    "@dao-library/treasury": "^2.1.0",
+    "@dao-library/voting": "^2.0.1",
     "ethers": "^6.9.1"
   },
   "scripts": {

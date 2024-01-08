@@ -21,7 +21,7 @@ importers:
   example/src:
     dependencies:
       '@dao-library/core':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: link:../../packages/core
       '@dao-library/membership':
         specifier: ^2.1.0
@@ -30,7 +30,7 @@ importers:
         specifier: ^2.0.0
         version: link:../../packages/treasury
       '@dao-library/voting':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: link:../../packages/voting
       ethers:
         specifier: ^6.9.1
@@ -101,9 +101,6 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
     devDependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0
       mocha:
         specifier: ^10.2.0
         version: 10.2.0

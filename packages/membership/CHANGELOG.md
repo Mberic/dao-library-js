@@ -1,5 +1,11 @@
 # @dao-library/membership
 
+## 2.2.0
+
+### Minor Changes
+
+- Upgrade database library version
+
 ## 2.1.0
 
 ### Minor Changes

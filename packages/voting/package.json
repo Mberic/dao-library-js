@@ -14,7 +14,6 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
     "mocha": "^10.2.0"
   },
   "dependencies": {
