@@ -1,14 +1,14 @@
 {
   "name": "src",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "@dao-library/core": "^1.0.2",
-    "@dao-library/membership": "^1.0.2",
-    "@dao-library/treasury": "^1.1.3",
-    "@dao-library/voting": "^1.0.2",
+    "@dao-library/core": "^2.0.0",
+    "@dao-library/membership": "^2.1.0",
+    "@dao-library/treasury": "^2.0.0",
+    "@dao-library/voting": "^2.0.0",
     "ethers": "^6.9.1"
   },
   "scripts": {

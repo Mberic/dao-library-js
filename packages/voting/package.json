@@ -1,6 +1,6 @@
 {
   "name": "@dao-library/voting",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "",
   "type": "module",
   "exports": {
@@ -11,15 +11,15 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "test": "vitest"
+    "test": "mocha"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "vitest": "^1.1.0"
+    "mocha": "^10.2.0"
   },
   "dependencies": {
+    "@dao-library/database": "workspace:*",
     "sinon": "^17.0.1",
-    "sqlite3": "^5.1.6",
-    "@dao-library/database": "1.1.0"
+    "sqlite3": "^5.1.6"
   }
 }
