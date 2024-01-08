@@ -2,87 +2,107 @@ import { connection, closeDatabaseConnection } from "@dao-library/database";
 
 /**
  * Returns the support threshold parameter stored in the voting settings.
- * @return {number|null} - The support threshold parameter.
+ * @return {Promise<number|null>} - A promise that resolves to the support threshold parameter.
  */
 function supportThreshold() {
-  let db = connection();
+  return new Promise((resolve, reject) => {
+    const db = connection();
 
-  try {
-    const result = db.get('SELECT SupportThreshold FROM VotingSettings');
-    return result ? result.SupportThreshold : null;
-  } catch (error) {
-    console.error(`Error in supportThreshold: ${error.message}`);
-    return null;
-  } finally {
-    closeDatabaseConnection(db);
-  }
+    db.get('SELECT SupportThreshold FROM VotingSettings', (err, result) => {
+      closeDatabaseConnection(db);
+
+      if (err) {
+        console.error(`Error in supportThreshold: ${err.message}`);
+        reject(err);
+      } else {
+        resolve(result ? result.SupportThreshold : null);
+      }
+    });
+  });
 }
 
 /**
  * Returns the minimum participation parameter stored in the voting settings.
- * @return {number|null} - The minimum participation parameter.
+ * @return {Promise<number|null>} - A promise that resolves to the minimum participation parameter.
  */
 function minParticipation() {
-  let db = connection();
+  return new Promise((resolve, reject) => {
+    const db = connection();
 
-  try {
-    const result = db.get('SELECT MinParticipation FROM VotingSettings');
-    return result ? result.MinParticipation : null;
-  } catch (error) {
-    console.error(`Error in minParticipation: ${error.message}`);
-    return null;
-  } finally {
-    closeDatabaseConnection(db);
-  }
+    db.get('SELECT MinParticipation FROM VotingSettings', (err, result) => {
+      closeDatabaseConnection(db);
+
+      if (err) {
+        console.error(`Error in minParticipation: ${err.message}`);
+        reject(err);
+      } else {
+        resolve(result ? result.MinParticipation : null);
+      }
+    });
+  });
 }
 
 /**
  * Checks if the support value defined for a proposal vote is greater than the support threshold.
  * @param {number} proposalId - The ID of the proposal.
- * @return {boolean} - Returns `true` if the support is greater than the support threshold and `false` otherwise.
+ * @return {Promise<boolean>} - A promise that resolves to `true` if the support is greater than the support threshold and `false` otherwise.
  */
-function isSupportThresholdReached(proposalId) {
+async function isSupportThresholdReached(proposalId) {
+  return new Promise(async (resolve, reject) => {
+    const db = connection();
+
+    try {
+      // Get the count of votes for the proposal
+      const result = await new Promise((resolveVotes, rejectVotes) => {
+        db.get('SELECT COUNT(*) AS count FROM Votes WHERE ProposalID = ?', [proposalId], (err, row) => {
+          if (err) {
+            rejectVotes(err);
+          } else {
+            resolveVotes(row ? row.count : 0);
+          }
+        });
+      });
+
+      // Get the support threshold
+      const threshold = await supportThreshold();
+
+      // Determine if the support is greater than the support threshold
+      resolve(result > (threshold !== null ? threshold : 0));
+    } catch (error) {
+      console.error(`Error in isSupportThresholdReached: ${error.message}`);
+      reject(false);
+    } finally {
+      // Close the database connection
+      closeDatabaseConnection(db);
+    }
+  });
+}
+
+
+/**
+ * Checks if the participation count for a proposal vote is greater than or equal to the minimum participation threshold.
+ * @param {number} proposalId - The ID of the proposal.
+ * @return {Promise<boolean>} - A promise that resolves to `true` if the participation is greater than or equal to the minimum participation threshold, and `false` otherwise.
+ */
+async function isMinParticipationReached(proposalId) {
   let db = connection();
 
   try {
-    const result = db.get('SELECT COUNT(*) AS count FROM Votes WHERE ProposalID = ?', [proposalId]);
-    const threshold = supportThreshold();
-    return result.count && threshold !== null ? result.count > threshold : false;
-  } catch (error) {
-    console.error(`Error in isSupportThresholdReached: ${error.message}`);
-    return false;
-  } finally {
-    closeDatabaseConnection(db);
-  }
-}
+    // Use a promise to asynchronously query the database
+    const result = await new Promise((resolve, reject) => {
+      db.get('SELECT COUNT(*) AS count FROM Votes WHERE ProposalID = ?', [proposalId], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row ? row.count : 0);
+        }
+      });
+    });
 
-/**
- * Checks if the worst-case support value defined for a proposal vote is greater than the support threshold.
- * @param {number} proposalId - The ID of the proposal.
- * @return {boolean} - Returns `true` if the worst-case support is greater than the support threshold and `false` otherwise.
- */
-function isSupportThresholdReachedEarly(proposalId) {
-  try {
-    // Assume worst-case support is equal to support
-    return isSupportThresholdReached(proposalId);
-  } catch (error) {
-    console.error(`Error in isSupportThresholdReachedEarly: ${error.message}`);
-    return false;
-  }
-}
+    const minParticipationValue = await minParticipation();
 
-/**
- * Checks if the participation value defined for a proposal vote is greater or equal than the minimum participation value.
- * @param {number} proposalId - The ID of the proposal.
- * @return {boolean} - Returns `true` if the participation is greater than the minimum participation and `false` otherwise.
- */
-function isMinParticipationReached(proposalId) {
-  let db = connection();
-
-  try {
-    const result = db.get('SELECT COUNT(*) AS count FROM Votes WHERE ProposalID = ?', [proposalId]);
-    const minParticipationValue = minParticipation();
-    return result && minParticipationValue !== null ? result.count >= minParticipationValue : false;
+    // Return the result based on the comparison with the min participation value
+    return result && minParticipationValue !== null ? result >= minParticipationValue : false;
   } catch (error) {
     console.error(`Error in isMinParticipationReached: ${error.message}`);
     return false;
@@ -92,17 +112,27 @@ function isMinParticipationReached(proposalId) {
 }
 
 /**
- * Returns whether the account has voted for the proposal.
+ * Returns the vote option cast by a voter for a certain proposal.
  * @param {number} proposalId - The ID of the proposal.
  * @param {string} account - The account address to be checked.
- * @return {string|null} - The vote option cast by a voter for a certain proposal.
+ * @return {Promise<string|null>} - A promise that resolves to the vote option or `null` if no vote is found.
  */
-function getVoteOption(proposalId, account) {
+async function getVoteOption(proposalId, account) {
   let db = connection();
 
   try {
-    const result = db.get('SELECT VoteOption FROM Votes WHERE ProposalID = ? AND VoteID = ?', [proposalId, account]);
-    return result ? result.VoteOption : null;
+    // Use a promise to asynchronously query the database
+    const result = await new Promise((resolve, reject) => {
+      db.get('SELECT VoteOption FROM Votes WHERE ProposalID = ? AND VoteID = ?', [proposalId, account], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row ? row.VoteOption : null);
+        }
+      });
+    });
+
+    return result;
   } catch (error) {
     console.error(`Error in getVoteOption: ${error.message}`);
     return null;
@@ -116,18 +146,23 @@ function getVoteOption(proposalId, account) {
  * @param {string} voter - The voter address/ID.
  * @param {number} proposalId - The ID of the proposal.
  * @param {string} voteOption - The chosen vote option.
+ * @returns {Promise<void>} A promise that resolves when the vote operation is completed.
  */
-function vote(voter, proposalId, voteOption) {
-  let db = connection();
+async function vote(voter, proposalId, voteOption) {
+  return new Promise((resolve, reject) => {
+    const db = connection();
 
-  try {
-    // Update the Votes table to reflect the vote
-    db.run('INSERT INTO Votes (VoteID, ProposalID, VoteOption) VALUES (?, ?, ?)', [voter, proposalId, voteOption]);
-  } catch (error) {
-    console.error(`Error in vote: ${error.message}`);
-  } finally {
-    closeDatabaseConnection(db);
-  }
+    db.run('INSERT INTO Votes (VoteID, ProposalID, VoteOption) VALUES (?, ?, ?)', [voter, proposalId, voteOption], (err) => {
+      closeDatabaseConnection(db);
+
+      if (err) {
+        console.error(`Error in vote: ${err.message}`);
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
 
 /**
@@ -136,17 +171,20 @@ function vote(voter, proposalId, voteOption) {
  * @returns {Promise<boolean>} A promise that resolves to true if the operation is successful, false otherwise.
  */
 async function setMinParticipation(minParticipation) {
-  let db = connection();
+  return new Promise((resolve, reject) => {
+    const db = connection();
 
-  try {
-    await db.run('UPDATE VotingSettings SET MinParticipation = ?', [minParticipation]);
-    closeDatabaseConnection(db);
-    return true;
-  } catch (error) {
-    console.error(`Error in setMinParticipation: ${error.message}`);
-    closeDatabaseConnection(db);
-    return false;
-  }
+    db.run('INSERT INTO VotingSettings (MinParticipation) VALUES(?)', [minParticipation], async (err) => {
+      closeDatabaseConnection(db);
+
+      if (err) {
+        console.error(`Error in setMinParticipation: ${err.message}`);
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
+  });
 }
 
 /**
@@ -155,23 +193,26 @@ async function setMinParticipation(minParticipation) {
  * @returns {Promise<boolean>} A promise that resolves to true if the operation is successful, false otherwise.
  */
 async function setSupportThreshold(supportThreshold) {
-  let db = connection();
+  return new Promise((resolve, reject) => {
+    const db = connection();
 
-  try {
-    await db.run('UPDATE VotingSettings SET SupportThreshold = ?', [supportThreshold]);
+    db.run('INSERT INTO VotingSettings (SupportThreshold) VALUES (?) ', [supportThreshold], async (err) => {
+      
+      if (err) {
+        console.error(`Error in setSupportThreshold: ${err.message}`);
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
+
     closeDatabaseConnection(db);
-    return true;
-  } catch (error) {
-    console.error(`Error in setSupportThreshold: ${error.message}`);
-    closeDatabaseConnection(db);
-    return false;
-  }
+  });
 }
 
 export { 
   isMinParticipationReached, 
   isSupportThresholdReached,
-  isSupportThresholdReachedEarly,
   getVoteOption,
   minParticipation,
   supportThreshold,

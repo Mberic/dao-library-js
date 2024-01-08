@@ -1,6 +1,6 @@
 {
   "name": "@dao-library/core",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "",
   "type": "module",
   "exports": {
@@ -9,7 +9,7 @@
     "./proposal": "./src/proposal.js"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +17,10 @@
   "devDependencies": {
     "@babel/core": "^7.23.6",
     "babel-jest": "^29.7.0",
-    "vitest": "^1.1.0"
+    "mocha": "^10.2.0"
   },
   "dependencies": {
-    "@jest/globals": "^29.7.0",
-    "@dao-library/database": "1.1.0"
+    "@dao-library/database": "workspace:*",
+    "@jest/globals": "^29.7.0"
   }
 }

@@ -1,52 +1,71 @@
 import { connection, closeDatabaseConnection } from "@dao-library/database";
 
-/// @param daoAddress The address of the DAO contract
-/// @param daoURI The DAO URI should confirm to [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824).
-function initialize(daoAddress, daoURI, version) {
-
-    let db = connection();
+/**
+ * @param {string} daoAddress - The address of the DAO contract.
+ * @param {string} daoURI - The DAO URI should conform to ERC-4824.
+ * @param {string} version - The DAO version.
+ * @returns {Promise<boolean>} - A promise that resolves to true if initialization is successful, false otherwise.
+ */
+async function initialize(daoAddress, daoURI, version) {
+  return new Promise(async (resolve, reject) => {
+    const db = connection();
 
     try {
       // Database action to insert DAO initialization data
-      db.run(`INSERT INTO Dao (daoAddress, daoURI, version) VALUES (?, ?, ?)`, [daoAddress, daoURI, version]);
-      
-      // close the database connection
-      closeDatabaseConnection(db);
+      await new Promise((resolveInsert, rejectInsert) => {
+        db.run(`INSERT INTO Dao (daoAddress, daoURI, version) VALUES (?, ?, ?)`, [daoAddress, daoURI, version], (err) => {
+          if (err) {
+            console.error(`Error in DAO insertion: ${err.message}`);
+            rejectInsert(err);
+          } else {
+            resolveInsert();
+          }
+        });
+      });
 
-      return true;
+      // Resolve with true if the insertion is successful
+      resolve(true);
     } catch (error) {
       console.error(`Error in initialize: ${error.message}`);
 
-      // close the database connection
+      // Reject with the error object for better error handling
+      reject(error);
+    } finally {
+      // Close the database connection regardless of success or failure
       closeDatabaseConnection(db);
-      return false;
     }
-  }
+  });
+}
 
-/// @notice Sets the new [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824) DAO URI and emits the associated event.
-/// @param daoURI The new DAO URI.
-function setDaoURI(daoURI, version) {
+
+/**
+ * @notice Sets the new [ERC-4824](https://eips.ethereum.org/EIPS/eip-4824) DAO URI and emits the associated event.
+ * @param {string} daoURI - The new DAO URI.
+ * @param {string} version - The DAO version.
+ * @returns {Promise<boolean>} - A promise that resolves to true if DAO URI is updated successfully, false otherwise.
+ */
+async function setDaoURI(daoURI, version) {
   return new Promise((resolve, reject) => {
-    let db = connection();
+    const db = connection();
 
-    try {
-      // Database action to update DAO URI in the Dao table for a given version
-      db.run(`UPDATE Dao SET daoURI = ? WHERE version = ?`, [daoURI, version], function (err) {
+    // Database action to update DAO URI in the Dao table for a given version
+    db.run(`UPDATE Dao SET daoURI = ? WHERE version = ?`, [daoURI, version], function (err) {
+      try {
         if (err) {
           console.error(`Error in setDaoURI (UPDATE): ${err.message}`);
-          closeDatabaseConnection(db);
           reject(false);
         } else {
           console.log(`Updated Dao URI for version ${version}`);
-          closeDatabaseConnection(db);
           resolve(true);
         }
-      });
-    } catch (error) {
-      console.error(`Error in setDaoURI: ${error.message}`);
-      closeDatabaseConnection(db);
-      reject(false);
-    }
+      } catch (error) {
+        console.error(`Error in setDaoURI: ${error.message}`);
+        reject(false);
+      } finally {
+        // Close the database connection regardless of success or failure
+        closeDatabaseConnection(db);
+      }
+    });
   });
 }
 

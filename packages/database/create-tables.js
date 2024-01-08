@@ -92,8 +92,8 @@ function createDaoTable() {
     return `
     CREATE TABLE IF NOT EXISTS VotingSettings (
       ProposalID INTEGER PRIMARY KEY REFERENCES Proposals(ProposalID),
-      SupportThreshold INTEGER,
-      MinParticipation INTEGER,
+      SupportThreshold INTEGER  DEFAULT 0,
+      MinParticipation INTEGER  DEFAULT 0,
       QuorumRequirement INTEGER,
       VoteDuration INTEGER,  -- Duration in seconds
       GracePeriod INTEGER,   -- Grace period after the official end of the vote in seconds
@@ -114,8 +114,8 @@ function createDaoTable() {
     return `
     CREATE TABLE IF NOT EXISTS Members (
       address VARCHAR(255) PRIMARY KEY,
-      balance INTEGER,
-      vestingId INTEGER -- Reference to vesting information if applicable
+      balance INTEGER DEFAULT 0,
+      vestingId VARCHAR(255) REFERENCES Vesting(VestingID) -- Reference to vesting information if applicable
   );
   
     `;
@@ -124,10 +124,10 @@ function createDaoTable() {
   function createTokenTable(){
     return `
       CREATE TABLE IF NOT EXISTS Token (
-        tokenId SERIAL PRIMARY KEY,
+        tokenId PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         symbol VARCHAR(10) NOT NULL,
-        totalSupply INTEGER NOT NULL CHECK (totalSupply >= 0)
+        totalSupply INTEGER NOT NULL CHECK (totalSupply >= 0) DEFAULT 0
       );
     `;
   }
@@ -135,8 +135,7 @@ function createDaoTable() {
   function createVestingTable(){
     return  `
       CREATE TABLE IF NOT EXISTS Vesting (
-        VestingID INTEGER PRIMARY KEY,
-        HolderAddress VARCHAR(255),
+        VestingID VARCHAR(255) PRIMARY KEY,
         Amount INTEGER,
         StartDate DATETIME,
         CliffDate DATETIME,
