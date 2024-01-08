@@ -1,65 +1,47 @@
-// __test__/token-manager.test.js
-import { describe, it, expect } from 'vitest';
-import {
-  mint,
-  issue,
-  assign,
-  burn,
-  assignVested,
-  revokeVesting,
-  getVesting,
-  spendableBalanceOf,
-} from '../src/token-manager.js';
+import { describe, it, beforeEach, afterEach, expect, test } from 'vitest';
+import { initializeTokenManager, assign, assignVested, burn, getVesting, issue, mint, revokeVesting, spendableBalanceOf } from '../src/token-manager.js';
 
-// Test suite
-describe('Token Manager Tests', () => {
-  // Test for mint
-  it('should mint tokens for the receiver', () => {
-    mint('MEMBER_ADDRESS', 100); // Replace 'receiverAddress' with an actual address
-    // Add assertions if needed
+import assert from 'assert';
+import { connection, closeDatabaseConnection } from "@dao-library/database";
+
+describe('Token Manager Functions', () => {
+  beforeEach(async () => {
+    // Reset the database before each test
+    const db = connection();
+    await db.exec('PRAGMA foreign_keys = OFF'); // Disable foreign key constraints for testing
+    await db.exec('BEGIN TRANSACTION');
+    await resetDatabase();
   });
 
-  // Test for issue
-  it('should issue tokens for the Token Manager', () => {
-    issue(100);
-    // Add assertions if needed
+  afterEach(async () => {
+    // Rollback the transaction after each test
+    const db = connection();
+    await db.exec('ROLLBACK');
+    await db.exec('PRAGMA foreign_keys = ON'); // Enable foreign key constraints after testing
+    closeDatabaseConnection(db);
   });
 
-  // Test for assign
-  it('should assign tokens to the receiver', () => {
-    assign('MEMBER_ADDRESS', 50); // Replace 'receiverAddress' with an actual address
-    // Add assertions if needed
-  });
+  it('should initialize the token manager with initial supply and add 0xda0 member', async () => {
+    const tokenName = 'TestToken';
+    const tokenSymbol = 'TT';
+    const initialSupply = 1000;
 
-  // Test for burn
-  it('should burn tokens from the holder', () => {
-    burn('MEMBER_ADDRESS', 20); // Replace 'holderAddress' with an actual address
-    // Add assertions if needed
-  });
+    const result = await initializeTokenManager(tokenName, tokenSymbol, initialSupply);
 
-  // Test for assignVested
-  it('should assign vested tokens to the receiver', () => {
-    assignVested('MEMBER_ADDRESS', 50, 'start', 'cliff', 'vested', true); // Replace 'receiverAddress' with an actual address
-    // Add assertions if needed
-  });
+    assert.strictEqual(result, true, 'Initialization should be successful');
 
-  // Test for revokeVesting
-  it('should revoke vesting for the holder', () => {
-    revokeVesting('MEMBER_ADDRESS', 1); // Replace 'holderAddress' with an actual address
-    // Add assertions if needed
-  });
+    const db = connection();
 
-  // Test for getVesting
-  it('should get vesting details for the recipient and vesting ID', async () => {
-    const vestingDetails = await getVesting('MEMBER_ADDRESS', 1); // Replace 'recipientAddress' with an actual address
-    // Add assertions if needed
-    expect(vestingDetails).not.toBe(null);
-  });
-
-  // Test for spendableBalanceOf
-  it('should get the spendable balance of the holder', async () => {
-    const balance = await spendableBalanceOf('MEMBER_ADDRESS'); // Replace 'holderAddress' with an actual address
-    // Add assertions if needed
-    expect(balance).not.toBe(null);
-  });
+    console.log("Db conection..........." + db);
 });
+
+});
+
+// Helper function to reset the database
+async function resetDatabase() {
+  const db = connection();
+  await db.exec('DELETE FROM Token');
+  await db.exec('DELETE FROM Members');
+  await db.exec('DELETE FROM Vesting');
+  closeDatabaseConnection(db);
+}
