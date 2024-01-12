@@ -32,13 +32,12 @@ See the README in the **example** directory.
 
 ## Testing
 
-You can carry out tests from each package's directory. Please note that if that database is carrying out multiple actions, some tests may appear to fail. You may get an `SQLITE BUSY ERROR`. 
-
-Simply wait a few seconds and re-run the tests. 
+You can carry out tests from each package's directory. 
 
 ```sh
 # example of running test
 cd packages/core
+pnpm install
 pnpm test
 ```
 ## References
