@@ -9,8 +9,7 @@ describe('Token Manager Functions', () => {
     // Reset the database before each test
     const db = connection();
     await db.exec('PRAGMA foreign_keys = OFF'); // Disable foreign key constraints for testing
-    await db.exec('BEGIN TRANSACTION');
-    await resetDatabase();
+    await resetDatabase(db);
   });
 
   it('should initialize the token manager with initial supply and add 0xda0 member', async () => {
@@ -58,7 +57,7 @@ describe('Token Manager Functions', () => {
       assert.strictEqual(amount, 500, 'Token table should be updated with the correct total supply');
       assert.strictEqual(spendable, amount, 'Spendable balance should match the minted amount');
     } finally {
-      closeDatabaseConnection(db);
+      await closeDatabaseConnection(db);
     }
   });
   
@@ -97,7 +96,7 @@ describe('Token Manager Functions', () => {
       assert.strictEqual(receiverSpendable, amount, 'Spendable balance should match the assigned amount');
     
     } finally {
-      closeDatabaseConnection(db);
+      await closeDatabaseConnection(db);
     }
 
   });
@@ -164,16 +163,15 @@ describe('Token Manager Functions', () => {
       const result = await spendableBalanceOf(holder);
       assert.strictEqual(result, 75, 'Spendable balance should match the initially set amount');
     } finally {
-      closeDatabaseConnection(db);
+      await closeDatabaseConnection(db);
     }
   });
 });
 
 // Helper function to reset the database
-async function resetDatabase() {
-  const db = connection();
+async function resetDatabase(db) {
   await db.exec('DELETE FROM Token');
   await db.exec('DELETE FROM Members');
   await db.exec('DELETE FROM Vesting');
-  closeDatabaseConnection(db);
+  await closeDatabaseConnection(db);
 }

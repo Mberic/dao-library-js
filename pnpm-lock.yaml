@@ -24,10 +24,10 @@ importers:
         specifier: ^2.0.1
         version: link:../../packages/core
       '@dao-library/membership':
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: link:../../packages/membership
       '@dao-library/treasury':
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: link:../../packages/treasury
       '@dao-library/voting':
         specifier: ^2.0.1

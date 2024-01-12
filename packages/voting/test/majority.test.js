@@ -23,14 +23,15 @@ describe('majority voting tests', () => {
     // Reset the database before each test
     const db = connection();
     await db.exec('PRAGMA foreign_keys = OFF'); // Disable foreign key constraints for testing
-    await db.exec('BEGIN TRANSACTION');
-    await resetDatabase();
+    await resetDatabase(db);
   });
 
     it('should return the correct support threshold', async () => {
       
     await setSupportThreshold(50);
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Introduce a short delay before proceeding to the next step
+    await new Promise(resolve => setImmediate(resolve));
+    
     const result = await supportThreshold();
     assert.equal(result, 50); 
   
@@ -56,12 +57,13 @@ describe('majority voting tests', () => {
         await vote('0xabcd', 123, 'Approve');
     
         await setSupportThreshold(1);
-        await new Promise(resolve => setTimeout(resolve, 100));
-    
+        // Introduce a short delay before proceeding to the next step
+        await new Promise(resolve => setImmediate(resolve));
+
         const result = await isSupportThresholdReached(123); 
         assert.equal(result, true); 
       } finally {
-        closeDatabaseConnection(db);
+        await closeDatabaseConnection(db);
       }
     });
     
@@ -85,7 +87,7 @@ describe('majority voting tests', () => {
       const result = await isMinParticipationReached(123); // Replace with your proposalId
       assert.equal(result, true); 
     } finally {
-      closeDatabaseConnection(db);
+      await closeDatabaseConnection(db);
     }
 
     });
@@ -104,7 +106,7 @@ describe('majority voting tests', () => {
       const result = await getVoteOption(123, '0xabc'); // Replace with your proposalId and account
       assert.equal(result, 'Abstain'); 
     } finally {
-      closeDatabaseConnection(db);
+      await closeDatabaseConnection(db);
     }
     });
 
@@ -135,10 +137,10 @@ describe('majority voting tests', () => {
 
 
 // Helper function to reset the database
-async function resetDatabase() {
-  const db = connection();
+async function resetDatabase(db) {
+  
   await db.exec('DELETE FROM Votes');
   await db.exec('DELETE FROM Proposals');
   await db.exec('DELETE FROM VotingSettings');
-  closeDatabaseConnection(db);
+  await closeDatabaseConnection(db);
 }
