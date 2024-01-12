@@ -103,11 +103,11 @@ In the input field, enter:
 ```
 See the sample image below (on the terminal running sunodo send generic ):
 
-![sunodo-send-generic](https://github.com/Mberic/dao-template-cartesi/assets/51446308/4fb64b0e-8dc0-40c0-89c8-c1111f77af72)
+![sunodo-send-generic](https://github.com/Mberic/dao-library-js/assets/51446308/e471f2a3-f312-4d16-9948-005c4409e853)
 
 On the terminal running index.js, you should have an output similar to:
 
-![indexJS-terminal](https://github.com/Mberic/dao-template-cartesi/assets/51446308/eabf3815-5e25-4a50-8cae-029e99d2de0b)
+![indexJs](https://github.com/Mberic/dao-library-js/assets/51446308/16bdf8c9-bd43-40fd-acec-f58a9a9b27d8)
 
 To know whether everything is running as it should, you can check the dao.db file to know if the input reached:
 
@@ -125,7 +125,7 @@ curl -i http://localhost:8080/inspect/protocol-version
 ```
 Result:
 
-![protocol-version](https://github.com/Mberic/dao-template-cartesi/assets/51446308/76764fa2-8a65-4637-99d0-d0c8582642a1)
+![protocol-version](https://github.com/Mberic/dao-library-js/assets/51446308/f3364d78-f0ed-410b-bd39-58523ed124d3)
 
 ### More Interactions
 
